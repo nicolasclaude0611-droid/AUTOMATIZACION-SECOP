@@ -16,11 +16,22 @@ concurrency:
 jobs:
   radar:
     runs-on: ubuntu-latest
+    env:
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PUERTO: ${{ secrets.SMTP_PUERTO }}
+      SMTP_USUARIO: ${{ secrets.SMTP_USUARIO }}
+      SMTP_CLAVE: ${{ secrets.SMTP_CLAVE }}
+      CORREO_REMITENTE: ${{ secrets.CORREO_REMITENTE }}
+      CORREO_DESTINO: ${{ secrets.CORREO_DESTINO }}
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Verificar configuración
+        if: env.SMTP_USUARIO == '' || env.SMTP_CLAVE == ''
+        run: echo "::warning::Faltan los secretos del correo (SMTP_USUARIO, SMTP_CLAVE...). Configúrelos en Settings > Secrets and variables > Actions. El radar no hará nada hasta entonces."
 
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -28,16 +39,11 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Revisar SECOP y enviar correo
-        env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PUERTO: ${{ secrets.SMTP_PUERTO }}
-          SMTP_USUARIO: ${{ secrets.SMTP_USUARIO }}
-          SMTP_CLAVE: ${{ secrets.SMTP_CLAVE }}
-          CORREO_REMITENTE: ${{ secrets.CORREO_REMITENTE }}
-          CORREO_DESTINO: ${{ secrets.CORREO_DESTINO }}
+        if: env.SMTP_USUARIO != '' && env.SMTP_CLAVE != ''
         run: python -m radar_ips
 
       - name: Guardar procesos ya vistos
+        if: env.SMTP_USUARIO != '' && env.SMTP_CLAVE != ''
         run: |
           git config user.name "radar-ips-bot"
           git config user.email "radar-ips-bot@users.noreply.github.com"

@@ -17,28 +17,34 @@ concurrency:
 jobs:
   buzon:
     runs-on: ubuntu-latest
+    env:
+      IMAP_HOST: ${{ secrets.IMAP_HOST }}
+      IMAP_USUARIO: ${{ secrets.IMAP_USUARIO }}
+      IMAP_CLAVE: ${{ secrets.IMAP_CLAVE }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PUERTO: ${{ secrets.SMTP_PUERTO }}
+      SMTP_USUARIO: ${{ secrets.SMTP_USUARIO }}
+      SMTP_CLAVE: ${{ secrets.SMTP_CLAVE }}
+      CORREO_REMITENTE: ${{ secrets.CORREO_REMITENTE }}
+      CORREO_DESTINO: ${{ secrets.CORREO_DESTINO }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Verificar configuración
+        if: env.SMTP_USUARIO == '' || env.SMTP_CLAVE == ''
+        run: echo "::warning::Faltan los secretos del correo (SMTP_USUARIO, SMTP_CLAVE...). Configúrelos en Settings > Secrets and variables > Actions. El radar no hará nada hasta entonces."
 
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
       - name: Leer alertas de SECOP II y reenviar las relevantes
-        env:
-          IMAP_HOST: ${{ secrets.IMAP_HOST }}
-          IMAP_USUARIO: ${{ secrets.IMAP_USUARIO }}
-          IMAP_CLAVE: ${{ secrets.IMAP_CLAVE }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PUERTO: ${{ secrets.SMTP_PUERTO }}
-          SMTP_USUARIO: ${{ secrets.SMTP_USUARIO }}
-          SMTP_CLAVE: ${{ secrets.SMTP_CLAVE }}
-          CORREO_REMITENTE: ${{ secrets.CORREO_REMITENTE }}
-          CORREO_DESTINO: ${{ secrets.CORREO_DESTINO }}
+        if: env.SMTP_USUARIO != '' && env.SMTP_CLAVE != ''
         run: python -m radar_ips --buzon
 
       - name: Guardar correos ya procesados
+        if: env.SMTP_USUARIO != '' && env.SMTP_CLAVE != ''
         run: |
           git config user.name "radar-ips-bot"
           git config user.email "radar-ips-bot@users.noreply.github.com"
