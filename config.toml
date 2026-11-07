@@ -20,23 +20,40 @@ puntaje_minimo = 65
 # los servicios de interés (recomendado para evitar ruido).
 requerir_servicio = true
 
+# Si es true, solo se notifican procesos de los departamentos/municipios de
+# cobertura. Importante para las alertas de SECOP II, que llegan de todo el país.
+requerir_ubicacion = true
+
 # Asunto del correo
 asunto = "RADAR IPS - Nuevas oportunidades SECOP"
 
 [cobertura]
-departamentos = ["Cesar", "La Guajira"]
+departamentos = ["Cesar", "La Guajira", "Guajira"]
+# Municipios que se buscan dentro del texto del proceso. No se incluyen los
+# que tienen el mismo nombre que municipios de otros departamentos (La Paz,
+# San Diego, El Paso, San Martín, González, Albania, Villanueva, Manaure,
+# Barrancas, La Gloria): para esos debe aparecer también el departamento.
 municipios = [
   # Cesar
-  "Valledupar", "Aguachica", "Agustin Codazzi", "Astrea", "Becerril", "Bosconia",
-  "Chimichagua", "Chiriguana", "Curumani", "El Copey", "El Paso", "Gamarra",
-  "Gonzalez", "La Gloria", "La Jagua de Ibirico", "La Paz", "Manaure Balcon del Cesar",
-  "Pailitas", "Pelaya", "Pueblo Bello", "Rio de Oro", "San Alberto", "San Diego",
-  "San Martin", "Tamalameque",
+  "Valledupar", "Aguachica", "Agustin Codazzi", "Codazzi", "Astrea", "Becerril", "Bosconia",
+  "Chimichagua", "Chiriguana", "Curumani", "El Copey", "Gamarra",
+  "La Jagua de Ibirico", "Manaure Balcon del Cesar",
+  "Pailitas", "Pelaya", "Pueblo Bello", "Rio de Oro", "San Alberto", "Tamalameque",
   # La Guajira
-  "Riohacha", "Albania", "Barrancas", "Dibulla", "Distraccion", "El Molino",
-  "Fonseca", "Hatonuevo", "La Jagua del Pilar", "Maicao", "Manaure", "San Juan del Cesar",
-  "Uribia", "Urumita", "Villanueva",
+  "Riohacha", "Dibulla", "Distraccion", "El Molino",
+  "Fonseca", "Hatonuevo", "La Jagua del Pilar", "Maicao", "San Juan del Cesar",
+  "Uribia", "Urumita",
 ]
+
+[buzon]
+# Lectura de las alertas oficiales de SECOP II que llegan por correo.
+# Se buscan correos cuyo remitente contenga alguno de estos textos.
+remitentes = ["secop", "colombiacompra"]
+# Carpetas del buzón a revisar (en Gmail: "INBOX", "[Gmail]/All Mail", ...)
+carpetas = ["INBOX"]
+# Días hacia atrás que se revisan en el buzón.
+dias_a_revisar = 2
+asunto = "RADAR IPS - ALERTA SECOP II"
 
 [modalidades]
 # Modalidades que NO se notifican porque normalmente el contratista ya

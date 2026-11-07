@@ -1,0 +1,52 @@
+name: Alertas SECOP II (buzón)
+
+on:
+  schedule:
+    # Cada 5 minutos, el mínimo que permite GitHub. En horas de mucha carga
+    # GitHub puede retrasar el inicio varios minutos.
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-buzon
+  cancel-in-progress: false
+
+jobs:
+  buzon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Leer alertas de SECOP II y reenviar las relevantes
+        env:
+          IMAP_HOST: ${{ secrets.IMAP_HOST }}
+          IMAP_USUARIO: ${{ secrets.IMAP_USUARIO }}
+          IMAP_CLAVE: ${{ secrets.IMAP_CLAVE }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PUERTO: ${{ secrets.SMTP_PUERTO }}
+          SMTP_USUARIO: ${{ secrets.SMTP_USUARIO }}
+          SMTP_CLAVE: ${{ secrets.SMTP_CLAVE }}
+          CORREO_REMITENTE: ${{ secrets.CORREO_REMITENTE }}
+          CORREO_DESTINO: ${{ secrets.CORREO_DESTINO }}
+        run: python -m radar_ips --buzon
+
+      - name: Guardar correos ya procesados
+        run: |
+          git config user.name "radar-ips-bot"
+          git config user.email "radar-ips-bot@users.noreply.github.com"
+          git add data/vistos_buzon.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios"
+          else
+            git commit -m "Actualizar alertas procesadas"
+            git pull --rebase
+            git push
+          fi

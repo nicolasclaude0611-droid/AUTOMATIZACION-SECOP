@@ -4,6 +4,7 @@ Cada fuente devuelve procesos en un formato común (diccionario Proceso).
 """
 
 import json
+import re
 import logging
 import time
 import urllib.parse
@@ -16,6 +17,7 @@ BASE = "https://www.datos.gov.co/resource"
 SECOP_II = "p6dx-8zbt"  # SECOP II - Procesos de Contratación
 SECOP_I = "f789-7hwg"   # SECOP I - Procesos de Compra Pública
 PAGINA = 1000
+RE_NTC = re.compile(r"CO1\.NTC\.\d+")
 
 
 def _consultar(dataset: str, where: str, orden: str) -> list[dict]:
@@ -74,9 +76,13 @@ def secop_ii(desde: date, departamentos: list[str]) -> list[dict]:
     procesos = []
     for f in filas:
         codigo = (f.get("codigo_principal_de_categoria") or "").replace("V1.", "")
+        url = _url(f.get("urlproceso"))
+        # Se usa el número de aviso (CO1.NTC...) porque es el mismo que traen
+        # las alertas de SECOP II por correo; así no se notifica dos veces.
+        ntc = RE_NTC.search(url)
         procesos.append({
             "fuente": "SECOP II",
-            "id": "SECOPII:" + (f.get("id_del_proceso") or f.get("referencia_del_proceso", "")),
+            "id": "SECOPII:" + (ntc.group(0) if ntc else (f.get("id_del_proceso") or f.get("referencia_del_proceso", ""))),
             "referencia": f.get("referencia_del_proceso", ""),
             "entidad": f.get("entidad", ""),
             "departamento": f.get("departamento_entidad", ""),
@@ -90,7 +96,7 @@ def secop_ii(desde: date, departamentos: list[str]) -> list[dict]:
             "fecha_publicacion": (f.get("fecha_de_publicacion_del") or "")[:10],
             "valor": _numero(f.get("precio_base")),
             "unspsc": "" if codigo == "UNSPECIFIED" else codigo,
-            "url": _url(f.get("urlproceso")),
+            "url": url,
         })
     return procesos
 

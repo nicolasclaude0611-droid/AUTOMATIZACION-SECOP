@@ -28,6 +28,7 @@ class Calificador:
         cob = config["cobertura"]
         self.departamentos = {normalizar(d).strip() for d in cob["departamentos"]}
         self.lugares = Buscador(cob["departamentos"] + cob["municipios"])
+        self.requerir_ubicacion = config["general"].get("requerir_ubicacion", True)
         self.prefijos = config["unspsc"]["prefijos"]
         self.modalidades_excluidas = {normalizar(m).strip() for m in config["modalidades"]["excluir"]}
 
@@ -41,6 +42,9 @@ class Calificador:
         puntaje, razones = self.calificar(proceso)
         tiene_servicio = any(r.startswith(f"+{self.pesos['servicios']} Servicios") for r in razones)
         if self.requerir_servicio and not tiene_servicio:
+            return False, puntaje, razones
+        tiene_ubicacion = any(r.startswith(f"+{self.pesos['ubicacion']} ") for r in razones)
+        if self.requerir_ubicacion and not tiene_ubicacion:
             return False, puntaje, razones
         return puntaje >= self.minimo, puntaje, razones
 
@@ -60,7 +64,7 @@ class Calificador:
         if normalizar(proceso["departamento"]).strip() in self.departamentos:
             puntaje += p["ubicacion"]
             razones.append(f"+{p['ubicacion']} Ubicación: {proceso['municipio']}, {proceso['departamento']}")
-        elif lugares := self.lugares.encontrados(texto):
+        elif lugares := self.lugares.encontrados(texto + normalizar(proceso["municipio"])):
             puntaje += p["ubicacion"]
             razones.append(f"+{p['ubicacion']} Ejecución mencionada en: {', '.join(lugares[:3])}")
 
