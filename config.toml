@@ -1,0 +1,145 @@
+# =====================================================================
+# RADAR IPS - Configuración
+# Edite este archivo para ajustar qué procesos le llegan por correo.
+# Las palabras se comparan sin tildes y sin distinguir mayúsculas.
+# Una palabra que termina en * coincide con cualquier terminación
+# (ej. "medic*" encuentra medico, medica, medicina).
+# =====================================================================
+
+[general]
+# Días hacia atrás que se revisan en cada consulta. Los datos abiertos de
+# SECOP llegan con retraso, por eso se revisa una ventana amplia; los
+# procesos ya notificados no se vuelven a enviar.
+dias_a_revisar = 7
+
+# Puntaje mínimo (0-100) para enviar un proceso por correo.
+#   85-100 alta | 65-84 media | 40-64 baja | <40 muy baja
+puntaje_minimo = 65
+
+# Si es true, solo se notifican procesos que mencionen al menos uno de
+# los servicios de interés (recomendado para evitar ruido).
+requerir_servicio = true
+
+# Asunto del correo
+asunto = "RADAR IPS - Nuevas oportunidades SECOP"
+
+[cobertura]
+departamentos = ["Cesar", "La Guajira"]
+municipios = [
+  # Cesar
+  "Valledupar", "Aguachica", "Agustin Codazzi", "Astrea", "Becerril", "Bosconia",
+  "Chimichagua", "Chiriguana", "Curumani", "El Copey", "El Paso", "Gamarra",
+  "Gonzalez", "La Gloria", "La Jagua de Ibirico", "La Paz", "Manaure Balcon del Cesar",
+  "Pailitas", "Pelaya", "Pueblo Bello", "Rio de Oro", "San Alberto", "San Diego",
+  "San Martin", "Tamalameque",
+  # La Guajira
+  "Riohacha", "Albania", "Barrancas", "Dibulla", "Distraccion", "El Molino",
+  "Fonseca", "Hatonuevo", "La Jagua del Pilar", "Maicao", "Manaure", "San Juan del Cesar",
+  "Uribia", "Urumita", "Villanueva",
+]
+
+[modalidades]
+# Modalidades que NO se notifican porque normalmente el contratista ya
+# está elegido (no hay competencia abierta). Bórrelas de la lista si
+# quiere verlas igual.
+excluir = [
+  "Contratación directa",
+  "Contratación régimen especial",
+  "Contratación Directa (Ley 1150 de 2007)",
+  "Licitación pública Obra Publica",
+]
+
+[puntaje]
+# Pesos del puntaje de afinidad (deben sumar 100).
+servicios = 35
+ubicacion = 20
+unspsc = 20
+sector_salud = 15
+estado = 10
+# Puntos que se restan si aparece un término de exclusión.
+penalizacion_exclusion = 40
+# Penalización menor si hay exclusión pero también un servicio de interés
+# (proceso mixto que puede ser una oportunidad real).
+penalizacion_mixto = 20
+
+[unspsc]
+# Prefijos de códigos UNSPSC de interés. 85 = Servicios de salud.
+prefijos = ["85"]
+
+# ---------------------------------------------------------------------
+# Servicios de interés y sus palabras clave / sinónimos.
+# Para desactivar un servicio ponga activo = false.
+# ---------------------------------------------------------------------
+[servicios.consulta_externa]
+nombre = "Consulta externa"
+activo = true
+palabras = ["consulta externa", "consulta medica", "medicina general", "atencion ambulatoria", "baja complejidad"]
+
+[servicios.especialidades]
+nombre = "Especialidades médicas"
+activo = true
+palabras = ["especialista", "especialidades medicas", "consulta especializada", "atencion especializada", "pediatria", "ginecologia", "medicina interna",
+  "ortopedia", "cardiologia", "psiquiatria", "psicologia", "nutricion", "odontologia", "optometria", "mediana complejidad"]
+
+[servicios.promocion_prevencion]
+nombre = "Promoción y prevención"
+activo = true
+palabras = ["promocion y prevencion", "promocion de la salud", "prevencion de la enfermedad", "plan de intervenciones colectivas",
+  "intervenciones colectivas", "pic", "salud publica", "vacunacion", "tamizaje", "ruta de promocion", "rias", "riam"]
+
+[servicios.jornadas]
+nombre = "Jornadas de salud"
+activo = true
+palabras = ["jornada de salud", "jornadas de salud", "brigada de salud", "brigadas de salud", "jornadas medicas",
+  "brigada medica", "atencion extramural", "extramural"]
+
+[servicios.laboratorio]
+nombre = "Laboratorio clínico"
+activo = true
+palabras = ["laboratorio clinico", "examenes de laboratorio", "pruebas de laboratorio", "toma de muestras", "ayudas diagnosticas"]
+
+[servicios.rehabilitacion]
+nombre = "Rehabilitación y fisioterapia"
+activo = true
+palabras = ["rehabilitacion", "fisioterapia", "terapia fisica", "terapias", "fonoaudiologia", "terapia ocupacional", "terapia respiratoria"]
+
+[servicios.salud_ocupacional]
+nombre = "Salud ocupacional"
+activo = true
+palabras = ["salud ocupacional", "seguridad y salud en el trabajo", "sst", "examenes ocupacionales", "examenes medicos ocupacionales",
+  "examenes de ingreso", "examenes periodicos", "medicina del trabajo", "medicina laboral"]
+
+[servicios.domiciliaria]
+nombre = "Atención domiciliaria"
+activo = true
+palabras = ["atencion domiciliaria", "domiciliaria", "atencion en casa", "hospitalizacion en casa", "visitas domiciliarias"]
+
+[servicios.telemedicina]
+nombre = "Telemedicina"
+activo = true
+palabras = ["telemedicina", "telesalud", "teleconsulta", "teleorientacion"]
+
+[sector_salud]
+# Términos generales del sector salud (suman puntos de "sector salud").
+palabras = ["salud", "medic*", "paciente", "ips", "e.s.e", "ese hospital", "hospital", "eps", "atencion integral",
+  "servicios de salud", "prestacion de servicios de salud", "enfermeria", "clinic*", "sanitari*", "poblacion vulnerable"]
+
+[exclusiones]
+# Términos que indican que el proceso probablemente NO es de interés.
+palabras = ["suministro de medicamentos", "compra de medicamentos", "adquisicion de medicamentos", "dispositivos medicos",
+  "adquisicion de equipos", "compra de equipos", "dotacion", "mobiliario", "construccion", "obra", "obras", "mantenimiento",
+  "adecuacion", "remodelacion", "aseo", "vigilancia", "cafeteria", "combustible", "papeleria", "vehiculo", "transporte",
+  "software", "auxiliar de facturacion", "apoyo a la gestion", "suministro de", "insumos", "implementos",
+  "elementos", "adquirir", "adquisicion de", "compraventa", "piezas", "senalizacion*", "auditoria", "acueducto",
+  "alcantarillado", "via", "vias", "pavimentacion", "interventoria"]
+
+[contratos_individuales]
+# Frases típicas de contratos con una sola persona (OPS), que no son una
+# oportunidad para la IPS. Restan el puntaje completo de exclusión aunque
+# mencionen un servicio de interés.
+palabras = ["servicios profesionales como", "servicios profesionales de un", "servicios profesionales de una",
+  "como auxiliar", "un auxiliar", "una auxiliar", "auxiliar de enfermeria", "como medico", "como enfermer*",
+  "como jefe", "como odontolog*", "como bacteriolog*", "como psicolog*", "como fisioterapeut*", "como nutricionista",
+  "como terapeuta", "como regente", "como tecnico", "como tecnologo", "como profesional", "como higienista",
+  "como conductor", "como promotor*", "persona natural", "servicio de tecnico", "servicios tecnologos", "como citohistolog*", "como cito*", "como instrumentador*",
+  "como radiolog*", "como especialista", "como gerente", "como asesor*", "apoyo a la gestion"]
