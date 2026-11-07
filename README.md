@@ -72,11 +72,28 @@ En el repositorio: **Settings → Secrets and variables → Actions → New repo
 GitHub solo ejecuta tareas programadas desde la **rama principal**: fusione
 esta rama. Para probar de inmediato: **Actions → Alertas SECOP II (buzón) → Run workflow**.
 
-### Sobre la rapidez
+### 5. Revisión cada minuto con cron-job.org
 
-GitHub permite ejecutar como mínimo cada 5 minutos, y en horas de mucha
-carga puede retrasarse más. Para revisar **cada minuto**, ejecute el radar
-en un computador o servidor que esté siempre encendido:
+GitHub retrasa u omite las tareas programadas frecuentes, por eso el flujo
+del buzón solo se programa cada 15 minutos como respaldo. Para revisar
+**cada minuto**, un servicio gratuito (cron-job.org) le pide a GitHub que
+ejecute el flujo:
+
+1. Cree un token en https://github.com/settings/personal-access-tokens/new
+   - *Repository access*: **Only select repositories** → este repositorio.
+   - *Permissions → Repository → Actions*: **Read and write**. Nada más.
+2. En https://cron-job.org cree un trabajo:
+   - URL: `https://api.github.com/repos/nicolasclaude0611-droid/AUTOMATIZACION-SECOP/actions/workflows/buzon.yml/dispatches`
+   - Frecuencia: cada minuto.
+   - Método `POST`, cuerpo `{"ref":"claude/awesome-gauss-ytty4h"}` (la rama donde está el flujo).
+   - Encabezados: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
+     `X-GitHub-Api-Version: 2022-11-28`, `Content-Type: application/json`.
+   - Respuesta esperada: **204**.
+
+Si el flujo se fusiona a otra rama, cambie `ref` en cron-job.org. El token
+vence: renuévelo antes de su fecha de vencimiento.
+
+Alternativa sin GitHub: un computador o servidor siempre encendido:
 
 ```bash
 python -m radar_ips --buzon --continuo 60

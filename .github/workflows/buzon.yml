@@ -1,10 +1,11 @@
 name: Alertas SECOP II (buzón)
 
 on:
+  # La revisión de cada minuto la dispara cron-job.org llamando a
+  # workflow_dispatch (ver README). GitHub retrasa u omite las tareas
+  # programadas frecuentes, así que esta programación es solo un respaldo.
   schedule:
-    # Cada 5 minutos, el mínimo que permite GitHub. En horas de mucha carga
-    # GitHub puede retrasar el inicio varios minutos.
-    - cron: "*/5 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch: {}
 
 permissions:
