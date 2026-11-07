@@ -23,6 +23,7 @@ class Calificador:
         self.sector = Buscador(config["sector_salud"]["palabras"])
         self.exclusiones = Buscador(config["exclusiones"]["palabras"])
         self.individuales = Buscador(config.get("contratos_individuales", {}).get("palabras", []))
+        self.fuertes = Buscador(config.get("exclusiones_fuertes", {}).get("palabras", []))
         self.requerir_servicio = config["general"].get("requerir_servicio", True)
         self.minimo = config["general"]["puntaje_minimo"]
         cob = config["cobertura"]
@@ -87,6 +88,11 @@ class Calificador:
             puntaje -= resta
             tipo = "posible proceso mixto" if servicios else "probablemente fuera de interés"
             razones.append(f"-{resta} Exclusión, {tipo}: {', '.join(excl[:3])}")
+
+        fuertes = self.fuertes.encontrados(texto)
+        if fuertes:
+            puntaje -= p["penalizacion_exclusion"]
+            razones.append(f"-{p['penalizacion_exclusion']} Parece compra de bienes: {', '.join(fuertes[:2])}")
 
         indiv = self.individuales.encontrados(texto)
         if indiv:

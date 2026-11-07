@@ -80,8 +80,22 @@ penalizacion_exclusion = 40
 penalizacion_mixto = 20
 
 [unspsc]
-# Prefijos de códigos UNSPSC de interés. 85 = Servicios de salud.
-prefijos = ["85"]
+# Clases UNSPSC (6 dígitos) que corresponden al portafolio de la IPS.
+# Un código del proceso que empiece por alguna de estas suma puntos.
+prefijos = [
+  "851015",  # Centros de salud
+  "851016",  # Personas de soporte de prestación de servicios de salud
+  "851017",  # Servicios de administración de salud
+  "851115",  # Prevención y control de enfermedades contagiosas (PAI, VPH)
+  "851116",  # Prevención y control de enfermedades no contagiosas (crónicos, cáncer)
+  "851215",  # Servicios de prestadores de cuidado primario
+  "851216",  # Servicios médicos de doctores especialistas
+  "851217",  # Servicios de prestadores especialistas de servicios de salud
+  "851218",  # Laboratorios médicos
+  "851221",  # Servicios de rehabilitación
+  "851222",  # Servicios de evaluación y valoración de salud individual (ocupacional)
+  "851516",  # Asuntos nutricionales
+]
 
 # ---------------------------------------------------------------------
 # Servicios de interés y sus palabras clave / sinónimos.
@@ -90,19 +104,55 @@ prefijos = ["85"]
 [servicios.consulta_externa]
 nombre = "Consulta externa"
 activo = true
-palabras = ["consulta externa", "consulta medica", "medicina general", "atencion ambulatoria", "baja complejidad"]
+palabras = ["consulta externa", "consulta medica", "medicina general", "medico general", "medicina familiar",
+  "atencion ambulatoria", "baja complejidad", "servicios ambulatorios"]
 
 [servicios.especialidades]
 nombre = "Especialidades médicas"
 activo = true
-palabras = ["especialista", "especialidades medicas", "consulta especializada", "atencion especializada", "pediatria", "ginecologia", "medicina interna",
-  "ortopedia", "cardiologia", "psiquiatria", "psicologia", "nutricion", "odontologia", "optometria", "mediana complejidad"]
+palabras = ["especialista", "especialidades medicas", "consulta especializada", "atencion especializada", "mediana complejidad",
+  "pediatria", "ginecologia", "obstetricia", "medicina interna", "internista", "cirugia general", "ortopedia", "traumatologia",
+  "psiquiatria", "psicologia", "infectologia", "fisiatria", "neumologia", "alergologia", "reumatologia", "toxicologia",
+  "endocrinologia", "urologia", "nutricion", "optometria", "trabajo social"]
 
 [servicios.promocion_prevencion]
 nombre = "Promoción y prevención"
 activo = true
 palabras = ["promocion y prevencion", "promocion de la salud", "prevencion de la enfermedad", "plan de intervenciones colectivas",
-  "intervenciones colectivas", "pic", "salud publica", "vacunacion", "tamizaje", "ruta de promocion", "rias", "riam"]
+  "intervenciones colectivas", "pic", "salud publica", "tamizaje", "tamizajes", "ruta de promocion", "rias", "riam", "rpms",
+  "promocion y mantenimiento", "mantenimiento de la salud", "demanda inducida", "ciclo de vida", "primera infancia",
+  "crecimiento y desarrollo", "control prenatal", "gestantes", "salud materna", "salud sexual", "planificacion familiar"]
+
+[servicios.aps]
+nombre = "Atención primaria en salud (APS)"
+activo = true
+palabras = ["atencion primaria", "aps", "equipos de salud territorial", "equipos basicos de salud", "caps",
+  "centros de atencion primaria", "salud familiar y comunitaria", "caracterizacion familiar", "microterritorios",
+  "gestion integral del riesgo", "gestion del riesgo en salud", "capita", "pago global prospectivo", "red de prestadores"]
+
+[servicios.vacunacion]
+nombre = "Vacunación (PAI)"
+activo = true
+palabras = ["vacunacion", "vacuna*", "inmunizacion", "inmunizaciones", "programa ampliado de inmunizaciones", "pai",
+  "biologicos", "inmunoprevenibles", "coberturas de vacunacion"]
+
+[servicios.cronicos]
+nombre = "Gestión del riesgo crónico"
+activo = true
+palabras = ["enfermedades cronicas", "pacientes cronicos", "riesgo cardiovascular", "hipertension", "diabetes",
+  "dislipidemia", "obesidad", "nefroproteccion", "epoc", "desnutricion", "enfermedades no transmisibles"]
+
+[servicios.cancer]
+nombre = "Prevención de cáncer"
+activo = true
+palabras = ["cancer", "cervix", "citologia", "citologias", "vph", "papiloma", "colposcopia", "mamografia", "cancer de mama",
+  "prostata", "antigeno prostatico", "colon y recto", "sangre oculta", "deteccion temprana"]
+
+[servicios.imagenes]
+nombre = "Imágenes diagnósticas"
+activo = true
+palabras = ["imagenes diagnosticas", "ecografia", "ecografias", "rayos x", "radiologia", "electrocardiograma",
+  "electrocardiogramas", "apoyo diagnostico", "potenciales evocados", "otoemisiones", "tamizaje auditivo"]
 
 [servicios.jornadas]
 nombre = "Jornadas de salud"
@@ -113,23 +163,27 @@ palabras = ["jornada de salud", "jornadas de salud", "brigada de salud", "brigad
 [servicios.laboratorio]
 nombre = "Laboratorio clínico"
 activo = true
-palabras = ["laboratorio clinico", "examenes de laboratorio", "pruebas de laboratorio", "toma de muestras", "ayudas diagnosticas"]
+palabras = ["laboratorio clinico", "examenes de laboratorio", "pruebas de laboratorio", "toma de muestras", "ayudas diagnosticas",
+  "examenes clinicos", "bacteriologia", "pruebas rapidas"]
 
 [servicios.rehabilitacion]
 nombre = "Rehabilitación y fisioterapia"
 activo = true
-palabras = ["rehabilitacion", "fisioterapia", "terapia fisica", "terapias", "fonoaudiologia", "terapia ocupacional", "terapia respiratoria"]
+palabras = ["rehabilitacion integral", "rehabilitacion fisica", "servicios de rehabilitacion", "fisioterapia", "terapia fisica",
+  "terapias", "terapia integral", "fonoaudiologia", "terapia ocupacional", "terapia respiratoria", "discapacidad"]
 
 [servicios.salud_ocupacional]
 nombre = "Salud ocupacional"
 activo = true
 palabras = ["salud ocupacional", "seguridad y salud en el trabajo", "sst", "examenes ocupacionales", "examenes medicos ocupacionales",
-  "examenes de ingreso", "examenes periodicos", "medicina del trabajo", "medicina laboral"]
+  "examenes de ingreso", "examenes periodicos", "examenes de egreso", "medicina del trabajo", "medicina laboral",
+  "riesgos laborales", "puestos de trabajo"]
 
 [servicios.domiciliaria]
 nombre = "Atención domiciliaria"
 activo = true
-palabras = ["atencion domiciliaria", "domiciliaria", "atencion en casa", "hospitalizacion en casa", "visitas domiciliarias"]
+palabras = ["atencion domiciliaria", "domiciliaria", "domiciliario", "atencion en casa", "hospitalizacion en casa",
+  "visitas domiciliarias", "albergue de pacientes"]
 
 [servicios.telemedicina]
 nombre = "Telemedicina"
@@ -149,6 +203,11 @@ palabras = ["suministro de medicamentos", "compra de medicamentos", "adquisicion
   "software", "auxiliar de facturacion", "apoyo a la gestion", "suministro de", "insumos", "implementos",
   "elementos", "adquirir", "adquisicion de", "compraventa", "piezas", "senalizacion*", "auditoria", "acueducto",
   "alcantarillado", "via", "vias", "pavimentacion", "interventoria"]
+
+[exclusiones_fuertes]
+# Compras de bienes: restan el puntaje completo aunque mencionen un servicio.
+palabras = ["suministro y entrega", "compra de", "compraventa", "adquisicion de", "adquirir",
+  "dispositivos de asistencia", "ayudas tecnicas", "dotacion de"]
 
 [contratos_individuales]
 # Frases típicas de contratos con una sola persona (OPS), que no son una

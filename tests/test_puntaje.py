@@ -58,6 +58,22 @@ class PuntajeTest(unittest.TestCase):
             proceso("Rehabilitación del sistema de acueducto", modalidad="Selección Abreviada de Menor Cuantía"))
         self.assertFalse(enviar)
 
+    def test_compra_de_dispositivos_no_pasa(self):
+        enviar, _, _ = self.c.notificable(proceso(
+            "Suministro y entrega de ayudas técnicas para población con discapacidad, rehabilitación"))
+        self.assertFalse(enviar)
+
+    def test_contrato_mixto_con_medicamentos_si_pasa(self):
+        enviar, _, _ = self.c.notificable(proceso(
+            "Prestación de servicios de salud de baja complejidad y suministro de medicamentos", unspsc="85101500"))
+        self.assertTrue(enviar)
+
+    def test_servicios_del_portafolio(self):
+        for objeto in ("Equipos de salud territorial para atención primaria en salud",
+                       "Tamizaje de cáncer de cérvix y toma de citologías",
+                       "Jornada de vacunación PAI en zona rural"):
+            self.assertTrue(self.c.notificable(proceso(objeto))[0], objeto)
+
 
 if __name__ == "__main__":
     unittest.main()
