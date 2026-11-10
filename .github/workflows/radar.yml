@@ -15,6 +15,9 @@ concurrency:
 
 jobs:
   radar:
+    # PAUSADO: Gmail rechazó la contraseña de aplicación. Quitar esta línea
+    # cuando se actualice el secreto SMTP_CLAVE.
+    if: false
     runs-on: ubuntu-latest
     env:
       SMTP_HOST: ${{ secrets.SMTP_HOST }}
